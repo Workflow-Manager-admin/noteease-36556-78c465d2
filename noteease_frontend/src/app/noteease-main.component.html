@@ -1,0 +1,103 @@
+<div class="main-container">
+  <div class="top-bar">
+    <input
+      class="search-bar"
+      type="text"
+      placeholder="Search notes..."
+      [(ngModel)]="searchText"
+      aria-label="Search notes"
+    />
+  </div>
+
+  <div class="category-chips">
+    <span
+      *ngFor="let cat of categories"
+      [class.selected]="selectedCategory === cat"
+      (click)="setCategoryFilter(cat)"
+      class="chip"
+      >{{cat}}</span
+    >
+    <input
+      class="new-category-input"
+      type="text"
+      placeholder="Add category"
+      (keydown.enter)="addCategory($event.target.value); $event.target.value=''"
+      aria-label="Add new category"
+    />
+  </div>
+
+  <div class="notes-list">
+    <div
+      *ngFor="let note of filteredNotes"
+      class="note-card"
+      (click)="openEditNoteDialog(note)"
+      tabindex="0"
+      role="button"
+      aria-label="Edit note"
+    >
+      <div class="note-head">
+        <div class="note-title">{{ note.title }}</div>
+        <div class="note-date">{{ note.updatedAt | date:'shortDate' }}</div>
+      </div>
+      <div class="note-category">{{ note.category }}</div>
+      <div class="note-snippet">
+        {{ note.content.length > 80 ? (note.content | slice:0:78) + '...' : note.content }}
+      </div>
+    </div>
+    <div *ngIf="filteredNotes.length === 0" class="no-notes">
+      No notes found.
+    </div>
+  </div>
+
+  <button
+    class="fab"
+    (click)="openNewNoteDialog()"
+    aria-label="Create new note"
+    title="Create new note"
+  >
+    +
+  </button>
+
+  <!-- Modal/dialog for create/edit note -->
+  <div class="modal-overlay" *ngIf="showNoteDialog">
+    <div class="modal-dialog">
+      <form (ngSubmit)="saveNote()" autocomplete="off">
+        <h2>{{ isCreatingNew ? 'New Note' : 'Edit Note' }}</h2>
+        <input
+          class="modal-title"
+          type="text"
+          [(ngModel)]="editingNote.title"
+          name="noteTitle"
+          placeholder="Note Title"
+          maxlength="100"
+          required
+        />
+        <textarea
+          class="modal-content"
+          [(ngModel)]="editingNote.content"
+          name="noteContent"
+          rows="7"
+          placeholder="Type your note here..."
+          required
+        ></textarea>
+        <label class="modal-label">Category:</label>
+        <select
+          class="modal-category"
+          [(ngModel)]="editingNote.category"
+          name="noteCategory"
+          required
+        >
+          <option *ngFor="let cat of categories" [value]="cat">
+            {{ cat }}
+          </option>
+        </select>
+
+        <div class="modal-actions">
+          <button type="button" class="cancel-btn" (click)="closeNoteDialog()">Cancel</button>
+          <button type="button" class="delete-btn" *ngIf="!isCreatingNew" (click)="deleteNote(editingNote)">Delete</button>
+          <button type="submit" class="save-btn">{{ isCreatingNew ? 'Create' : 'Save' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
