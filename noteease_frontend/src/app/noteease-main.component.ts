@@ -10,12 +10,18 @@ interface Note {
   updatedAt: Date;
 }
 
+import { NgIf, NgFor, DatePipe, SlicePipe, CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
 // PUBLIC_INTERFACE
 @Component({
   selector: 'noteease-main',
   standalone: true,
   templateUrl: './noteease-main.component.html',
-  styleUrl: './noteease-main.component.css'
+  styleUrl: './noteease-main.component.css',
+  imports: [
+    CommonModule, NgIf, NgFor, FormsModule, DatePipe, SlicePipe
+  ]
 })
 export class NoteeaseMainComponent {
   notes: Note[] = [];

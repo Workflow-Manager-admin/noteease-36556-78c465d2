@@ -21,7 +21,8 @@
       class="new-category-input"
       type="text"
       placeholder="Add category"
-      (keydown.enter)="addCategory($event.target.value); $event.target.value=''"
+      #catInput
+      (keydown.enter)="addCategory(catInput.value); catInput.value=''"
       aria-label="Add new category"
     />
   </div>
@@ -63,38 +64,40 @@
     <div class="modal-dialog">
       <form (ngSubmit)="saveNote()" autocomplete="off">
         <h2>{{ isCreatingNew ? 'New Note' : 'Edit Note' }}</h2>
-        <input
-          class="modal-title"
-          type="text"
-          [(ngModel)]="editingNote.title"
-          name="noteTitle"
-          placeholder="Note Title"
-          maxlength="100"
-          required
-        />
-        <textarea
-          class="modal-content"
-          [(ngModel)]="editingNote.content"
-          name="noteContent"
-          rows="7"
-          placeholder="Type your note here..."
-          required
-        ></textarea>
-        <label class="modal-label">Category:</label>
-        <select
-          class="modal-category"
-          [(ngModel)]="editingNote.category"
-          name="noteCategory"
-          required
-        >
-          <option *ngFor="let cat of categories" [value]="cat">
-            {{ cat }}
-          </option>
-        </select>
+        <ng-container *ngIf="editingNote">
+          <input
+            class="modal-title"
+            type="text"
+            [(ngModel)]="editingNote.title"
+            name="noteTitle"
+            placeholder="Note Title"
+            maxlength="100"
+            required
+          />
+          <textarea
+            class="modal-content"
+            [(ngModel)]="editingNote.content"
+            name="noteContent"
+            rows="7"
+            placeholder="Type your note here..."
+            required
+          ></textarea>
+          <label class="modal-label">Category:</label>
+          <select
+            class="modal-category"
+            [(ngModel)]="editingNote.category"
+            name="noteCategory"
+            required
+          >
+            <option *ngFor="let cat of categories" [value]="cat">
+              {{ cat }}
+            </option>
+          </select>
+        </ng-container>
 
         <div class="modal-actions">
           <button type="button" class="cancel-btn" (click)="closeNoteDialog()">Cancel</button>
-          <button type="button" class="delete-btn" *ngIf="!isCreatingNew" (click)="deleteNote(editingNote)">Delete</button>
+          <button type="button" class="delete-btn" *ngIf="!isCreatingNew && editingNote" (click)="deleteNote(editingNote)">Delete</button>
           <button type="submit" class="save-btn">{{ isCreatingNew ? 'Create' : 'Save' }}</button>
         </div>
       </form>
